@@ -5,7 +5,6 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
     const [value, setValue] = useState(initialValue);
     const [showKeyboard, setShowKeyboard] = useState(false);
 
-    const inputRef = useRef(null);
     const startX = useRef(0);
     const direction = useRef(0);
     const bias = useRef(0);
@@ -21,6 +20,9 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
     }, [value, onChange]);
 
     const handleStart = (e) => {
+        if (showKeyboard) {
+            return
+        }
         isDragging.current = true;
         startX.current = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         startValue.current = parseFloat(value);
@@ -67,29 +69,29 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         setValue(startValue.current)
         setTimeout(() => {
             setShowKeyboard(true);
-        }, 10);
+        }, 100);
     };
 
     const handleKeyboardInput = (newValue) => {
-        console.log(newValue)
         setValue(newValue)
     }
 
     return (
-        <div {...props} className="flex flex-col items-center w-28 bg-white">
+        <div {...props} className="flex flex-col items-center w-28 px-[4px] bg-white">
             <div
                 onDoubleClick={handleDoubleClick}
                 onMouseDown={handleStart}
                 onTouchStart={handleStart}
-                className="cursor-ew-resize w-[108px] text-center border rounded-md"
+                className="cursor-ew-resize w-full px-[4px] text-center border rounded-md h-7"
             >
-                <input
-                    ref={inputRef}
-                    type="number"
-                    value={value}
+                <span
+                    // type="number"
+                    // value={value}
                     readOnly
-                    className="jx1 w-[104px] text-center outline-none rounded-md"
-                />
+                    className="jx1 w-full  text-center outline-none rounded-md h-6"
+                >
+                    {value}
+                </span>
             </div>
             {showKeyboard && (
                 <CustomKeyboard
@@ -106,10 +108,15 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
 
 function CustomKeyboard({ onChange, done, initialValue }) {
     const [localValue, setLocalValue] = useState(initialValue);
+    const first = useRef(true)
 
     const handleKeyDown = (e) => {
         if (e.key >= '0' && e.key <= '9') {
             setLocalValue(prevInput => {
+                if (first.current) {
+                    first.current = false
+                    prevInput = ""
+                }
                 const newValue = prevInput + "" + e.key
                 return parseFloat(newValue)
             });
@@ -143,6 +150,10 @@ function CustomKeyboard({ onChange, done, initialValue }) {
             return;
         }
         setLocalValue(prevInput => {
+            if (first.current) {
+                first.current = false
+                prevInput = ""
+            }
             const newValue = prevInput + "" + num
             return parseFloat(newValue)
 
@@ -182,7 +193,7 @@ function CustomKeyboard({ onChange, done, initialValue }) {
     }
 
     return (
-        <div className="z-10 bg-white bg-opacity-95 absolute mt-7 custom-keyboard grid grid-cols-3 grid-rows-5">
+        <div className="z-10 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-3 grid-rows-5">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, "n", 0, "s", 'd', '', ''].map((num, index) => (
                 <button
                     key={num + "" + index}

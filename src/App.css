@@ -41,13 +41,13 @@
 @tailwind components;
 @tailwind utilities;
 
-input[type=number].jx1::-webkit-outer-spin-button,
-input[type=number].jx1::-webkit-inner-spin-button {
+input.jx1::-webkit-outer-spin-button,
+input.jx1::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0; /* Optional: You can also place some margin if needed */
 }
-input[type=number].jx1 {
+.jx1 {
     -moz-appearance: textfield; /* Firefox compatibility */
     user-select: none; 
-    pointer-events: none
+    /* pointer-events: none */
 }
