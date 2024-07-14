@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BackspaceRounded, ArrowUpwardRounded } from "./Icons"
+import { BackspaceRounded, ArrowUpwardRounded, IcRoundPlusMinusAlt } from "./Icons"
 
 function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChange, ...props }) {
     const [value, setValue] = useState(initialValue);
     const [showKeyboard, setShowKeyboard] = useState(false);
 
     const inputRef = useRef(null);
-    const MouseRef = useRef(null);
     const startX = useRef(0);
     const direction = useRef(0);
     const bias = useRef(0);
@@ -24,7 +23,7 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
     const handleStart = (e) => {
         isDragging.current = true;
         startX.current = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-        startValue.current = value;
+        startValue.current = parseFloat(value);
         bias.current = 0
         document.addEventListener('mousemove', handleMove);
         document.addEventListener('touchmove', handleMove);
@@ -71,74 +70,129 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         }, 10);
     };
 
-    const handleKeyboardInput = (inputValue, isDone = false) => {
-        const newValue = Math.max(min, Math.min(max, parseInt(inputValue) || 0));
-        setValue(newValue);
-        if (isDone) {
-            setShowKeyboard(false);
-        }
-    };
+    const handleKeyboardInput = (newValue) => {
+        console.log(newValue)
+        setValue(newValue)
+    }
 
     return (
-        <div {...props }className="flex flex-col items-center w-28 bg-white">
+        <div {...props} className="flex flex-col items-center w-28 bg-white">
             <div
-                ref={MouseRef}
                 onDoubleClick={handleDoubleClick}
                 onMouseDown={handleStart}
                 onTouchStart={handleStart}
-                className="cursor-ew-resize w-[102px] text-center"
+                className="cursor-ew-resize w-[108px] text-center border rounded-md"
             >
                 <input
                     ref={inputRef}
                     type="number"
                     value={value}
                     readOnly
-                    className="jx1 w-[102px] text-center border rounded-md outline-none "
+                    className="jx1 w-[104px] text-center outline-none rounded-md"
                 />
             </div>
             {showKeyboard && (
-                <CustomKeyboard initialValue={value} onInput={handleKeyboardInput} onClose={() => setShowKeyboard(false)} />
+                <CustomKeyboard
+                    onChange={handleKeyboardInput}
+                    initialValue={value}
+                    done={() => {
+                        setShowKeyboard(false);
+                    }}
+                />
             )}
         </div>
     );
 }
 
-function CustomKeyboard({ onInput, onClose, initialValue = 0 }) {
-    const [input, setInput] = useState(initialValue);
+function CustomKeyboard({ onChange, done, initialValue }) {
+    const [localValue, setLocalValue] = useState(initialValue);
 
-    const handleButtonClick = (num) => {
-        if (num == "s") {
-            handleSubmit()
-            return
+    const handleKeyDown = (e) => {
+        if (e.key >= '0' && e.key <= '9') {
+            setLocalValue(prevInput => {
+                const newValue = prevInput + "" + e.key
+                return parseFloat(newValue)
+            });
+        } else if (e.key === 'Backspace') {
+            handleDelete();
+        } else if (e.key === 'Enter') {
+            handleSubmit();
+        } else if (e.key === '-') {
+            handleNegate();
         }
-        if (num == "d") {
-            handleDelete()
-            return
-        }
-        setInput(prevInput => prevInput + ("" + num))
     };
 
     useEffect(() => {
-        onInput(input);
-    }, [input])
+        window.addEventListener('keydown', handleKeyDown)
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [])
+
+    const handleButtonClick = (num) => {
+        if (num === "s" || num === "") {
+            handleSubmit();
+            return;
+        }
+        if (num === "d") {
+            handleDelete();
+            return;
+        }
+        if (num === "n") {
+            handleNegate();
+            return;
+        }
+        setLocalValue(prevInput => {
+            const newValue = prevInput + "" + num
+            return parseFloat(newValue)
+
+        });
+    };
 
     useEffect(() => {
-        setInput(initialValue)
-    }, [initialValue])
+        onChange(isNaN(localValue) ? 0 : localValue);
+    }, [localValue, onChange]);
 
     const handleSubmit = () => {
-        onInput(input, "done");
+        done()
     };
 
     const handleDelete = () => {
-        setInput(prevInput => (prevInput + "").slice(0, -1));
+        setLocalValue(prevInput => {
+            const newValue = parseFloat((prevInput + "").slice(0, -1))
+            return newValue ? parseFloat((prevInput + "").slice(0, -1)) : 0
+        });
     };
 
+    const handleNegate = () => {
+        setLocalValue(prevInput => parseFloat(prevInput) * -1);
+    };
+
+    const advanceClass = (i) => {
+        if (i == 11) {
+            return "border-b-0 rounded-b-none !mb-0 h-[2.1rem]"
+        }
+        if (i == 13) {
+            return "border-r-0 rounded-r-none !mr-0 w-[2.1rem]"
+        }
+        if (i == 14) {
+            return "border-l-0 rounded-l-none border-t-0 rounded-t-none !ml-0 !mt-0 w-[2.1rem] h-[2.1rem]"
+        }
+        return ""
+    }
+
     return (
-        <div className="z-10 bg-white bg-opacity-95 absolute  mt-7 custom-keyboard grid grid-cols-3 grid-rows-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, "d", 0, 's'].map(num => (
-                <button key={num} id={`button-${num}`} className="m-[0.1rem] rounded-md border w-8 h-8" onClick={() => handleButtonClick(num)}>
-                    {num === "d" || num == "s" ? (num == "d" ? <BackspaceRounded className="ml-[0.3rem] w-5 h-5" /> : <ArrowUpwardRounded className="ml-[0.3rem] w-5 h-5" />) : num}
+        <div className="z-10 bg-white bg-opacity-95 absolute mt-7 custom-keyboard grid grid-cols-3 grid-rows-5">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, "n", 0, "s", 'd', '', ''].map((num, index) => (
+                <button
+                    key={num + "" + index}
+                    id={`button-${num}`}
+                    className={`m-[0.1rem] rounded-md border w-8 h-8 ${advanceClass(index)}`}
+                    onClick={() => handleButtonClick(num)}
+                >
+                    {num === "d" ? <BackspaceRounded className="ml-[0.3rem] w-5 h-5" /> :
+                        num === "s" ? <ArrowUpwardRounded className="ml-[0.3rem] w-5 h-5" /> :
+                            num === "n" ? <IcRoundPlusMinusAlt className="ml-[0.3rem] w-5 h-5" /> : num}
                 </button>
             ))}
         </div>

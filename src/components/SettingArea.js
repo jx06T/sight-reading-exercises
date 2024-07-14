@@ -3,7 +3,7 @@ import IntInputBox from "./IntInputBox";
 
 function SettingArea({ callback, ...params }) {
     const onChange = (v) => {
-        console.log(v)
+        // console.log(v)
     }
 
     return (
