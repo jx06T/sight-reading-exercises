@@ -5,7 +5,6 @@ import SettingArea from "../components/SettingArea"
 function Exercise(params) {
     return (
         <div className="m-10 exercise">
-            <h1>exercise</h1>
             <SettingArea />
             <ABC_Renderer />
         </div>

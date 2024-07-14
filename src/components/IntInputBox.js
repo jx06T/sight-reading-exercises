@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BackspaceRounded } from "./Icons"
+import { BackspaceRounded, ArrowUpwardRounded } from "./Icons"
+
 function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChange, ...props }) {
     const [value, setValue] = useState(initialValue);
     const [showKeyboard, setShowKeyboard] = useState(false);
@@ -20,13 +21,15 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         }
     }, [value, onChange]);
 
-    const handleMouseDown = (e) => {
+    const handleStart = (e) => {
         isDragging.current = true;
-        startX.current = e.clientX;
+        startX.current = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         startValue.current = value;
         bias.current = 0
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        document.addEventListener('mousemove', handleMove);
+        document.addEventListener('touchmove', handleMove);
+        document.addEventListener('mouseup', handleEnd);
+        document.addEventListener('touchend', handleEnd);
 
         intervalRef.current = setInterval(() => {
             bias.current += direction.current
@@ -35,11 +38,12 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         }, 50);
     };
 
-    const handleMouseMove = (e) => {
+    const handleMove = (e) => {
         if (isDragging.current) {
-            diff.current = Math.round((e.clientX - startX.current) / 4);
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            diff.current = Math.round((clientX - startX.current) / 4);
             if (Math.abs(diff.current) > 14) {
-                direction.current = (e.clientX > startX.current) * 2 - 1
+                direction.current = (clientX > startX.current) * 2 - 1
                 diff.current = 15 * direction.current
             } else {
                 direction.current = 0
@@ -49,18 +53,22 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         }
     };
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
         isDragging.current = false;
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('touchmove', handleMove);
+        document.removeEventListener('mouseup', handleEnd);
+        document.removeEventListener('touchend', handleEnd);
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
         }
     };
 
-
     const handleDoubleClick = () => {
-        setShowKeyboard(true);
+        setValue(startValue.current)
+        setTimeout(() => {
+            setShowKeyboard(true);
+        }, 10);
     };
 
     const handleKeyboardInput = (inputValue, isDone = false) => {
@@ -72,11 +80,12 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
     };
 
     return (
-        <div className="flex flex-col items-center w-32 bg-white ">
+        <div {...props }className="flex flex-col items-center w-28 bg-white">
             <div
                 ref={MouseRef}
                 onDoubleClick={handleDoubleClick}
-                onMouseDown={handleMouseDown}
+                onMouseDown={handleStart}
+                onTouchStart={handleStart}
                 className="cursor-ew-resize w-[102px] text-center"
             >
                 <input
@@ -84,7 +93,6 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
                     type="number"
                     value={value}
                     readOnly
-                    {...props}
                     className="jx1 w-[102px] text-center border rounded-md outline-none "
                 />
             </div>
@@ -129,7 +137,9 @@ function CustomKeyboard({ onInput, onClose, initialValue = 0 }) {
     return (
         <div className="z-10 bg-white bg-opacity-95 absolute  mt-7 custom-keyboard grid grid-cols-3 grid-rows-4">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, "d", 0, 's'].map(num => (
-                <button key={num} id={`button-${num}`} className="m-[0.1rem] rounded-md border w-8 h-8" onClick={() => handleButtonClick(num)}>{num}</button>
+                <button key={num} id={`button-${num}`} className="m-[0.1rem] rounded-md border w-8 h-8" onClick={() => handleButtonClick(num)}>
+                    {num === "d" || num == "s" ? (num == "d" ? <BackspaceRounded className="ml-[0.3rem] w-5 h-5" /> : <ArrowUpwardRounded className="ml-[0.3rem] w-5 h-5" />) : num}
+                </button>
             ))}
         </div>
     );
