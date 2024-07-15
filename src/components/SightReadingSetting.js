@@ -1,35 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IntInputBox from "./IntInputBox";
 import MultipleChoice from "./MultipleChoice";
+import SingleChoice from "./SingleChoice";
+import SettingArea from "./SettingArea";
 
-function SightReadingSetting({ callback, ...params }) {
-    const onChange = (v) => {
-        // console.log(v)
+function SightReadingSetting({ data,callback, ...params }) {
+    const onChange = (v, key) => {
+        callback(v, "SightReadin", key)
     }
 
     return (
-        <div className="setting-area flex flex-row flex-wrap justify-center">
-            <div className="flex m-2 min-w-52">
-                <span className="">參考點</span>
-                <MultipleChoice options={["C","♯C", "D","♯D", "E", "F","♯F", "G","♯G", "A","♯A", "B"]} onChange={onChange} className="" />
+        <SettingArea title="Sight Reading">
+            <div className="setting-area flex flex-row flex-wrap justify-center">
+                {
+                    data.map((e, i) => (
+                        <div key={e.key} className="jx-3">
+                            <span className="">{e.label}</span>
+                            {e.type === "MultipleChoice" ? <MultipleChoice options={e.options.map(e => e.label)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue || undefined} /> :
+                                e.type === "SingleChoice" ? <SingleChoice options={e.options.map(e => e.label)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue || undefined} /> :
+                                    <IntInputBox min={e.min} max={e.max} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue || undefined} />
+                            }
+                        </div>
+                    ))
+                }
             </div>
-            <div className="flex m-2 min-w-52">
-                <span className="">音程</span>
-                <MultipleChoice options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]} onChange={onChange} className="" />
-            </div>
-            <div className="flex m-2 min-w-52">
-                <span className="">雙音音程</span>
-                <MultipleChoice options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]} onChange={onChange} className="" />
-            </div>
-            <div className="flex m-2 min-w-52">
-                <span className="">音域</span>
-                <MultipleChoice options={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]} onChange={onChange} className="" />
-            </div>
-            <div className="flex m-2 min-w-52">
-                <span className="">調</span>
-                <MultipleChoice options={['C', 'G', 'D', 'A', 'E', 'B', 'F♯', 'C♯', 'F', 'B♭', 'E♭', 'A♭', 'D♭', 'G♭', 'C♭']} onChange={onChange} className="" />
-            </div>
-        </div>
+        </SettingArea>
     );
 }
 

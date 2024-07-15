@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { BackspaceRounded, ArrowUpwardRounded, IcRoundPlusMinusAlt } from "./Icons"
+import React, { useState, useEffect } from "react";
+import { ArrowUpwardRounded } from "./Icons"
 
 function MultipleChoice({ options, initialValue = [1, 2], min = -Infinity, max = Infinity, onChange, ...props }) {
     const [bValue, setValue] = useState(initialValue);
@@ -7,6 +7,7 @@ function MultipleChoice({ options, initialValue = [1, 2], min = -Infinity, max =
 
     useEffect(() => {
         if (onChange) {
+            // onChange(bValue.map(e=>options[e]));
             onChange(bValue);
         }
     }, [bValue, onChange]);
@@ -16,7 +17,7 @@ function MultipleChoice({ options, initialValue = [1, 2], min = -Infinity, max =
     };
 
     const handleKeyboardInput = (newValue) => {
-        console.log(newValue)
+        // console.log(newValue)
         setValue(newValue)
     }
 
@@ -56,7 +57,7 @@ function MultipleChoice({ options, initialValue = [1, 2], min = -Infinity, max =
 function CustomKeyboard({ options, onChange, done, initialValue }) {
     const [localValue, setLocalValue] = useState(initialValue);
 
-    const handleButtonClick = (btnIndex,e) => {
+    const handleButtonClick = (btnIndex, e) => {
         if (localValue.includes(btnIndex)) {
             setLocalValue(prevInput => prevInput.filter(e => e != btnIndex));
         } else {
@@ -87,7 +88,7 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
                         key={num + "" + index}
                         id={`button-${index}-${num}`}
                         className={`m-[0.1rem] rounded-md border w-8 h-8 ${advanceClass(index)}`}
-                        onClick={(e) => handleButtonClick(index,e)}
+                        onClick={(e) => handleButtonClick(index, e)}
                     >
                         {num}
                     </button>

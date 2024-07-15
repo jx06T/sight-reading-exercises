@@ -1,0 +1,31 @@
+{
+    "SightReadin": {
+        "reference": [
+            0,
+            7
+        ],
+        "interval": [
+            1,
+            2
+        ],
+        "intervalDT": [
+            1,
+            2
+        ],
+        "rannge": [
+            3,
+            4
+        ],
+        "tonality": [
+            0
+        ]
+    },
+    "SheetMusic": {
+        "timeSignature": 2,
+        "speed": 80,
+        "rowsSM": 1,
+        "lengthSM": 8,
+        "rightHand": 1,
+        "leftHand": 2
+    }
+}

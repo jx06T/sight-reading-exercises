@@ -55,3 +55,11 @@ input.jx1::-webkit-inner-spin-button {
 hr{
   @apply my-4
 }
+
+.jx-2{
+  @apply z-20 border-2 hover:border-slate-100 rounded-md bg-slate-200 text-lg p-1 px-2
+}
+
+.jx-3{
+  @apply flex m-2 mx-3 min-w-52 justify-between
+}

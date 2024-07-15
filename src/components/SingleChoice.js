@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { BackspaceRounded, ArrowUpwardRounded, IcRoundPlusMinusAlt } from "./Icons"
+import React, { useState, useEffect } from "react";
+import { ArrowUpwardRounded } from "./Icons"
 
 function SingleChoice({ options, initialValue = 1, min = -Infinity, max = Infinity, onChange, ...props }) {
     const [bValue, setValue] = useState(initialValue);
@@ -7,6 +7,7 @@ function SingleChoice({ options, initialValue = 1, min = -Infinity, max = Infini
 
     useEffect(() => {
         if (onChange) {
+            // onChange(options[bValue]);
             onChange(bValue);
         }
     }, [bValue, onChange]);
