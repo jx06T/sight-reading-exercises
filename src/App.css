@@ -51,3 +51,7 @@ input.jx1::-webkit-inner-spin-button {
     user-select: none; 
     /* pointer-events: none */
 }
+
+hr{
+  @apply my-4
+}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { BackspaceRounded, ArrowUpwardRounded, IcRoundPlusMinusAlt } from "./Icons"
 
-function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChange, ...props }) {
+function FloatInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChange, ...props }) {
     const [value, setValue] = useState(initialValue);
     const [showKeyboard, setShowKeyboard] = useState(false);
 
@@ -35,22 +35,26 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         intervalRef.current = setInterval(() => {
             bias.current += direction.current
             const newValue = Math.max(min, Math.min(max, startValue.current + diff.current + bias.current));
-            setValue(Math.round(newValue));
+            setValue(parseFloat(newValue));
         }, 50);
     };
 
     const handleMove = (e) => {
         if (isDragging.current) {
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-            diff.current = Math.round((clientX - startX.current) / 4);
-            if (Math.abs(diff.current) > 14) {
+            diff.current = parseFloat(((clientX - startX.current) / 10).toFixed(2));
+            console.log(diff.current)
+            if (Math.abs(diff.current) > 8) {
                 direction.current = (clientX > startX.current) * 2 - 1
-                diff.current = 15 * direction.current
+                diff.current = 9 * direction.current
+                console.log(diff.current)
             } else {
                 direction.current = 0
+                console.log(diff.current)
             }
             const newValue = Math.max(min, Math.min(max, startValue.current + diff.current + bias.current));
-            setValue(Math.round(newValue));
+            console.log(diff.current)
+            setValue(parseFloat(newValue));
         }
     };
 
@@ -121,6 +125,8 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
             handleSubmit();
         } else if (e.key === '-') {
             handleNegate();
+        } else if (e.key === ".") {
+            handlePoint();
         }
     };
 
@@ -138,6 +144,8 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
             handleDelete();
         } else if (num === "n") {
             handleNegate();
+        } else if (num === ".") {
+            handlePoint();
         } else {
             handleType(num)
         }
@@ -151,18 +159,6 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
         done()
     };
 
-    const handleDelete = () => {
-        setLocalValue(prevInput => {
-            const newValue = parseFloat((prevInput + "").slice(0, -1))
-            const newNewValue = Math.max(min, Math.min(max, newValue ? newValue : 0));
-            return newNewValue
-        });
-    };
-
-    const handleNegate = () => {
-        setLocalValue(prevInput => Math.max(min, Math.min(max, parseFloat(prevInput) * -1)));
-    };
-
     const handleType = (v) => {
         setLocalValue(prevInput => {
             if (first.current) {
@@ -173,6 +169,25 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
             const newNewValue = Math.max(min, Math.min(max, newValue));
             return parseFloat(newNewValue)
         });
+    };
+
+    const handlePoint = () => {
+        setLocalValue(prevInput => {
+            const newValue = prevInput + "."
+            return newValue
+        });
+    };
+
+    const handleDelete = () => {
+        setLocalValue(prevInput => {
+            const newValue = parseFloat((prevInput + "").slice(0, -1))
+            const newNewValue = Math.max(min, Math.min(max, newValue ? newValue : 0));
+            return newNewValue
+        });
+    };
+
+    const handleNegate = () => {
+        setLocalValue(prevInput => Math.max(min, Math.min(max, parseFloat(prevInput) * -1)));
     };
 
     const advanceClass = (i) => {
@@ -190,17 +205,14 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
             return b
         }
         if (i == 15) {
-            return t + " " + l
-        }
-        if (i == 14) {
-            return r
+            return t
         }
         return ""
     }
 
     return (
         <div className="z-10 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4">
-            {[1, 2, 3, "d", 4, 5, 6, " d", 7, 8, 9, "s", "n", 0, ' s', ' s'].map((num, index) => (
+            {[1, 2, 3, "d", 4, 5, 6, " d", 7, 8, 9, "s", "n", 0, '.', ' s'].map((num, index) => (
                 <button
                     key={num + "" + index}
                     id={`button-${num}`}
@@ -216,4 +228,4 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
     );
 }
 
-export default IntInputBox;
+export default FloatInputBox;
