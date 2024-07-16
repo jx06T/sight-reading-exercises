@@ -30,7 +30,7 @@ function ABC_Renderer({ lengthSM, id = "1", music = "c", m = "4/4", l = "1/4", k
 
     useEffect(() => {
         setInterval(() => {
-            containerLeftRef.current -= 2
+            containerLeftRef.current -= 2   
             containerRef.current.style.left = containerLeftRef.current + "px"
         }, 50);
     }, [])
