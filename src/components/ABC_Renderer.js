@@ -35,7 +35,8 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
 
             const renderedSvg = containerRef.current.querySelector("svg");
             if (renderedSvg) {
-                containerRef.current.style.width = lengthSM * 444 + 210 + "px";
+                // containerRef.current.style.width = lengthSM * 444 + 210 + "px";
+                containerRef.current.style.width = containerRef.current.offsetWidth + 5 + "px";
                 // containerRef.current.style.height = renderedSvg.height.baseVal.value + "px";
             }
 

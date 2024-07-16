@@ -66,11 +66,12 @@ function PlayArea({ getData, ...params }) {
     }
 
     const render = (data) => {
-        console.log(data)
+        const M = data.SheetMusic.timeSignature.split("/").map(e => parseInt(e))
+        console.log(data, M)
         let music = "|"
         let lastNote = getRandomItem(data.SightReadin.reference)
         for (let i = 0; i < data.SheetMusic.lengthSM; i++) {
-            for (let j = 0; j < 4; j++) {
+            for (let j = 0; j < M[0]; j++) {
                 const allChoices = probabilityTableDT.reduce((r, e, lI) => {
                     return r + (data.SightReadin.intervalDT.includes(lI) ? e : "")
                 }, "")
@@ -100,7 +101,7 @@ function PlayArea({ getData, ...params }) {
         setRendererData({
             music: music,
             m: data.SheetMusic.timeSignature,
-            l: "1/4",
+            l: "1/" + M[1],
             k: data.SightReadin.tonality,
             lengthSM: data.SheetMusic.lengthSM,
             bpm: data.SheetMusic.speed
