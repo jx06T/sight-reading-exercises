@@ -8,8 +8,8 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
     const containerLeftRef = useRef(0);
     const animationRef = useRef(null);
     const playingRef = useRef(false);
-    let isMuteRef = useRef(false);
-    let isFirst = true;
+
+    const isMuteRef = useRef(false);
     let lastTime = 0;
 
     const [midiBuffer, setMidiBuffer] = useState(null)
@@ -21,8 +21,7 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
             containerRef.current.style.left = containerLeftRef.current + "px";
             const scale = 3;
 
-            // const visualObj = abcjs.renderAbc(containerRef.current, abcNotation, {
-            const visualObj = abcjs.renderAbc("abcjs-container", abcNotation, {
+            const visualObj = abcjs.renderAbc(containerRef.current, abcNotation, {
                 scale: scale,
                 paddingleft: 0,
                 paddingright: 0,
@@ -40,71 +39,23 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
                 // containerRef.current.style.height = renderedSvg.height.baseVal.value + "px";
             }
 
-            if (!midiBuffer) {
-                playAudio(visualObj[0])
-            }
-            pause()
             if (midiBuffer) {
-                midiBuffer.stop();
-                isFirst = true;
+                pause()
             }
-            load(visualObj[0])
-        }
-    }
-
-    const playAudio = (visualObj) => {
-        if (abcjs.synth.supportsAudio()) {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            let midiBuffer = new abcjs.synth.CreateSynth();
-            midiBuffer.init({
-                //audioContext: new AudioContext(),
-                audioContext: audioContext,
-                visualObj: visualObj,
-                // sequence: [],
-                // millisecondsPerMeasure: 1000,
-                // debugCallback: function(message) { console.log(message) },
-                options: {
-                    // soundFontUrl: "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/" ,
-                    // sequenceCallback: function(noteMapTracks, callbackContext) { return noteMapTracks; },
-                    // callbackContext: this,
-                    // onEnded: function(callbackContext),
-                    // pan: [ -0.5, 0.5 ]
-                }
-            }).then((response) => {
-                // alert(midiBuffer.prime())
-                // console.log(response);
-                midiBuffer.prime().then((response) => {
-                    setMidiBuffer(midiBuffer)
-                    // alert('dcvv d')
-                    // midiBuffer.start();
-                    // midiBuffer.pause();
-                });
-            }).catch((error) => {
-                console.warn("Audio problem:", error);
-                alert("dsdsdsdsdmidiBuffer")
-            });
-        } else {
-            document.querySelector(".error").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+            setTimeout(() => {
+                load(visualObj[0])
+            }, 10);
         }
     }
 
     const play = () => {
-        console.log(isMuteRef.current)
         if (animationRef.current) return;
-        playingRef.current = true;
 
-        if (midiBuffer && !isMuteRef.current) {
-            console.log(isFirst)
-            if (!isFirst) {
-                midiBuffer.start();
-            } else {
-                setTimeout(() => {
-                    midiBuffer.start();
-                    isFirst = false;
-                }, 36000 / bpm);
-            }
+        if (midiBuffer && !isMuteRef.current && !playingRef.current) {
+            midiBuffer.click();
         }
 
+        playingRef.current = true;
         const pixelsPerBeat = 110;
         const beatsPerSecond = bpm / 60;
         const pixelsPerSecond = pixelsPerBeat * beatsPerSecond;
@@ -119,7 +70,7 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
             if (parseInt(containerLeftRef.current) < -1 * parseInt(containerRef.current.style.width)) {
                 containerLeftRef.current = "0"
                 containerRef.current.style.left = `${containerLeftRef.current}px`;
-                pause()
+                pause(true)
             }
             if (containerRef.current) {
                 containerRef.current.style.left = `${containerLeftRef.current}px`;
@@ -128,33 +79,77 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
                 animationRef.current = requestAnimationFrame(animate);
             }
         };
-
         animationRef.current = requestAnimationFrame(animate);
     };
 
-    const pause = () => {
+    const pause = (t = false) => {
         if (animationRef.current) {
+            console.log(playingRef.current)
             cancelAnimationFrame(animationRef.current);
             animationRef.current = null;
-            playingRef.current = false;
 
-            if (midiBuffer) {
-                console.log(midiBuffer)
-                midiBuffer.pause();
+            if (midiBuffer && !t && !isMuteRef.current && playingRef.current) {
+                midiBuffer.click();
             }
+            playingRef.current = false;
         }
     };
 
     const mute = () => {
-        if (playingRef.current) {
-            renderABC()
-            isMuteRef.current = !isMuteRef.current
-            play()
-        } else {
-            renderABC()
-            isMuteRef.current = !isMuteRef.current
-        }
+        if (!midiBuffer) return isMuteRef.current
+        const t = playingRef.current
+        renderABC()
+        isMuteRef.current = !isMuteRef.current
+        if (t) play()
         return isMuteRef.current
+    }
+
+    class CursorControl {
+        constructor() {
+            var self = this;
+            self.onEvent = function (ev) {
+                if (ev.measureStart && ev.left === null) return;
+
+                var lastSelection = document.querySelectorAll("svg .highlight");
+                for (var k = 0; k < lastSelection.length; k++) {
+                    lastSelection[k].classList.remove("highlight");
+                }
+
+                for (var i = 0; i < ev.elements.length; i++) {
+                    var note = ev.elements[i];
+                    for (var j = 0; j < note.length; j++) {
+                        note[j].classList.add("highlight");
+                    }
+                }
+            };
+        }
+    }
+
+
+    const cursorControl = new CursorControl();
+    const load = (visualObj) => {
+        if (abcjs.synth.supportsAudio()) {
+            synthControl = new abcjs.synth.SynthController();
+            synthControl.load("#audio", cursorControl, { displayPlay: true });
+            setTune(visualObj);
+        } else {
+            document.querySelector("#audio").innerHTML = "<div class='audio-error'>瀏覽器不支援音頻播放。</div>";
+        }
+    }
+
+    let synthControl;
+    const setTune = (visualObj) => {
+        synthControl.disable(true);
+        let midiBuffer0 = new abcjs.synth.CreateSynth();
+        midiBuffer0.init({ visualObj: visualObj }).then(() => {
+            const midiBuffer1 = audioRef.current.querySelector(".abcjs-midi-start")
+            setMidiBuffer(midiBuffer1)
+            synthControl.setTune(visualObj, true).then((response) => {
+                console.log("Audio successfully loaded.")
+            });
+        }).catch(function (error) {
+            console.warn("音頻加載問題:", error);
+        });
     }
 
     useImperativeHandle(ref, () => ({
@@ -168,33 +163,8 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
 
     useEffect(() => {
         renderABC();
-        return () => {
-        }
     }, [abcNotation, lengthSM]);
 
-    function load(visualObj) {
-        if (abcjs.synth.supportsAudio()) {
-            synthControl = new abcjs.synth.SynthController();
-            synthControl.load("#audio", null, { displayPlay: true });
-            setTune(visualObj);
-        } else {
-            document.querySelector("#audio").innerHTML = "<div class='audio-error'>瀏覽器不支援音頻播放。</div>";
-        }
-    }
-    let synthControl;
-
-    function setTune(visualObj) {
-        synthControl.disable(true);
-        var midiBuffer = new abcjs.synth.CreateSynth();
-        midiBuffer.init({ visualObj: visualObj }).then(function () {
-            synthControl.setTune(visualObj, true);
-        }).catch(function (error) {
-            console.warn("音頻加載問題:", error);
-        });
-        console.log(synthControl, "---------------------")
-
-    }
-    console.log(synthControl, "---------------------")
     return (
         <>
             <div ref={audioRef} id="audio" className="jx-4 mt-4 mb-8"></div>
@@ -202,8 +172,8 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
                 <div ref={containerRef} className="absolute !h-[500px]">
                     <div id="abcjs-container"></div>
                 </div>
-                <div className="absolute border-l-2 border-blue-700 border-dashed border-opacity-50 w-[4px] h-[160px]  left-[167px] top-[130px]">
-                </div>
+                {/* <div className="absolute border-l-2 border-blue-700 border-dashed border-opacity-50 w-[4px] h-[160px]  left-[167px] top-[130px]"> */}
+                {/* </div> */}
             </div>
         </>
     );

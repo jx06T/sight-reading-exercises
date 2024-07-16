@@ -65,6 +65,10 @@ hr{
 }
 
 .jx-4{
-  @apply hidden
+  /* @apply hidden */
 }
 
+.highlight {
+  fill: rgb(207, 0, 0);
+  stroke: rgb(207, 0, 0);
+}

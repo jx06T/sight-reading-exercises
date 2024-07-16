@@ -61,7 +61,7 @@ function PlayArea({ getData, ...params }) {
         return arr[Math.floor(Math.random() * arr.length)]
     }
 
-    const handleClick = (e) => {
+    const handleRender = (e) => {
         render(getData())
     }
 
@@ -106,15 +106,13 @@ function PlayArea({ getData, ...params }) {
             bpm: data.SheetMusic.speed
         })
 
-        handleRender()
+        abcRendererRef.current.renderABC();
+        playBtnRef.current.textContent = "Play"
     }
 
     const abcRendererRef = useRef();
 
-    const handleRender = () => {
-        abcRendererRef.current.renderABC();
-        playBtnRef.current.textContent = "Play"
-    };
+
 
     const handlePlay = (e) => {
         if (abcRendererRef.current.playingRef.current) {
@@ -126,21 +124,21 @@ function PlayArea({ getData, ...params }) {
         }
     };
 
-    const handleSound = (e) => {
+    const handleMute = (e) => {
         e.target.textContent = abcRendererRef.current.mute() ? "Unmute" : "Mute"
     };
 
-    // useEffect(() => {
-        // handleClick()
-    // }, [])
+    const handleRollback = () => {
+        abcRendererRef.current.renderABC()
+    };
 
     return (
         <>
             <div className="flex justify-center space-x-6">
-                <button onClick={handleClick} className="jx-2">Render</button>
-                <button onClick={handleRender} className="jx-2">Rollback</button>
+                <button onClick={handleRender} className="jx-2">Render</button>
+                <button onClick={handleRollback} className="jx-2">Rollback</button>
                 <button ref={playBtnRef} onClick={handlePlay} className="jx-2">Play</button>
-                <button onClick={handleSound} className="jx-2">Mute</button>
+                <button onClick={handleMute} className="jx-2">Mute</button>
             </div>
             <ABC_Renderer ref={abcRendererRef} {...rendererData} />
         </>

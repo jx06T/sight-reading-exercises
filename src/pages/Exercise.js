@@ -16,14 +16,14 @@ function Exercise(params) {
 
     useEffect(() => {
         import('../SettingTable.json')
-            .then(data => setSettingData(data))
-            .catch(error => console.error('Error loading questionnaire:', error));
+        .then(data => setSettingData(data))
+        .catch(error => console.error('Error loading questionnaire:', error));
     }, []);
-
+    
     const getSettingParameters = () => {
         return settingParameters.current
     }
-
+    
     if (!settingData) return <div>Loading...</div>;
 
     return (
