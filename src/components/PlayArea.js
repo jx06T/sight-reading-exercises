@@ -124,12 +124,10 @@ function PlayArea({ getData, ...params }) {
         }
     };
 
-    const handleMute = (e) => {
-        e.target.textContent = abcRendererRef.current.mute() ? "Unmute" : "Mute"
-    };
-
     const handleRollback = () => {
         abcRendererRef.current.renderABC()
+        playBtnRef.current.textContent = "Play"
+
     };
 
     return (
@@ -138,7 +136,7 @@ function PlayArea({ getData, ...params }) {
                 <button onClick={handleRender} className="jx-2">Render</button>
                 <button onClick={handleRollback} className="jx-2">Rollback</button>
                 <button ref={playBtnRef} onClick={handlePlay} className="jx-2">Play</button>
-                <button onClick={handleMute} className="jx-2">Mute</button>
+                {/* <button onClick={handleMute} className="jx-2">Mute</button> */}
             </div>
             <ABC_Renderer ref={abcRendererRef} {...rendererData} />
         </>

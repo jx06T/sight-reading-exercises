@@ -41,10 +41,9 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
 
             if (midiBuffer) {
                 pause()
+                console.log('s')
             }
-            setTimeout(() => {
-                load(visualObj[0])
-            }, 10);
+            load(visualObj[0])
         }
     }
 
@@ -94,15 +93,6 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
             playingRef.current = false;
         }
     };
-
-    const mute = () => {
-        if (!midiBuffer) return isMuteRef.current
-        const t = playingRef.current
-        renderABC()
-        isMuteRef.current = !isMuteRef.current
-        if (t) play()
-        return isMuteRef.current
-    }
 
     class CursorControl {
         constructor() {
@@ -157,7 +147,6 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
         renderABC,
         play,
         pause,
-        mute,
         playingRef,
     }));
 
@@ -168,8 +157,8 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
     return (
         <>
             <div ref={audioRef} id="audio" className="jx-4 mt-4 mb-8"></div>
-            <div className="relative w-full !h-[500px] -mt-7 abc-renderer overflow-hidden">
-                <div ref={containerRef} className="absolute !h-[500px]">
+            <div className="relative w-full !h-[700px] -mt-7 abc-renderer overflow-hidden">
+                <div ref={containerRef} className="absolute !h-[700px]">
                     <div id="abcjs-container"></div>
                 </div>
                 {/* <div className="absolute border-l-2 border-blue-700 border-dashed border-opacity-50 w-[4px] h-[160px]  left-[167px] top-[130px]"> */}
