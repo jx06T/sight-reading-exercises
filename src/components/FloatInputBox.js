@@ -211,7 +211,7 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
     }
 
     return (
-        <div className="z-10 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4">
+        <div className="z-30 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4">
             {[1, 2, 3, "d", 4, 5, 6, " d", 7, 8, 9, "s", "n", 0, '.', ' s'].map((num, index) => (
                 <button
                     key={num + "" + index}

@@ -4,9 +4,9 @@ import MultipleChoice from "./MultipleChoice";
 import SingleChoice from "./SingleChoice";
 import SettingArea from "./SettingArea";
 
-function SheetMusicSetting({ callback,data, ...params }) {
+function SheetMusicSetting({ callback, data, ...params }) {
     const onChange = (v, key) => {
-        callback(v,"SheetMusic",key)
+        callback(v, "SheetMusic", key)
     }
 
     return (
@@ -16,9 +16,9 @@ function SheetMusicSetting({ callback,data, ...params }) {
                     data.map((e, i) => (
                         <div key={e.key} className="jx-3">
                             <span className="">{e.label}</span>
-                            {e.type === "MultipleChoice" ? <MultipleChoice options={e.options.map(e => e.label)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue || undefined} /> :
-                                e.type === "SingleChoice" ? <SingleChoice options={e.options.map(e => e.label)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue || undefined} /> :
-                                    <IntInputBox min={e.min} max={e.max} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue || undefined} />
+                            {e.type === "MultipleChoice" ? <MultipleChoice options={e.options.map(e => e.label)} chart={e.options.map(e => e.value)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue} /> :
+                                e.type === "SingleChoice" ? <SingleChoice options={e.options.map(e => e.label)} chart={e.options.map(e => e.value)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue} /> :
+                                    <IntInputBox min={e.min} max={e.max} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue} />
                             }
                         </div>
                     ))

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUpwardRounded } from "./Icons"
 
-function SingleChoice({ options, initialValue = 1, min = -Infinity, max = Infinity, onChange, ...props }) {
+function SingleChoice({ options, chart, initialValue = 1, min = -Infinity, max = Infinity, onChange, ...props }) {
     const [bValue, setValue] = useState(initialValue);
     const [showKeyboard, setShowKeyboard] = useState(false);
 
     useEffect(() => {
         if (onChange) {
-            // onChange(options[bValue]);
-            onChange(bValue);
+            onChange(chart[bValue]);
+            // onChange(bValue);
         }
     }, [bValue, onChange]);
 
@@ -56,7 +56,7 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
     const [localValue, setLocalValue] = useState(initialValue);
 
     const handleButtonClick = (btnIndex, e) => {
-        console.log(btnIndex, e)
+        // console.log(btnIndex, e)
         setLocalValue(btnIndex)
     };
 
@@ -76,7 +76,7 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
     }
 
     return (
-        <div className="z-10 bg-white bg-opacity-95 absolute custom-keyboard mt-[30px]">
+        <div className="z-30 bg-white bg-opacity-95 absolute custom-keyboard mt-[30px]">
             <div className="grid grid-cols-4">
                 {options.map((num, index) => (
                     <button

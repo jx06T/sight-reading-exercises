@@ -191,43 +191,43 @@
             "label": "音程",
             "options": [
                 {
-                    "label": 0,
+                    "label": 1,
                     "value": 0
                 },
                 {
-                    "label": 1,
+                    "label": 2,
                     "value": 1
                 },
                 {
-                    "label": 2,
+                    "label": 3,
                     "value": 2
                 },
                 {
-                    "label": 3,
+                    "label": 4,
                     "value": 3
                 },
                 {
-                    "label": 4,
+                    "label": 5,
                     "value": 4
                 },
                 {
-                    "label": 5,
+                    "label": 6,
                     "value": 5
                 },
                 {
-                    "label": 6,
+                    "label": 7,
                     "value": 6
                 },
                 {
-                    "label": 7,
+                    "label": 8,
                     "value": 7
                 },
                 {
-                    "label": 8,
+                    "label": 9,
                     "value": 8
                 },
                 {
-                    "label": 9,
+                    "label": 10,
                     "value": 9
                 }
             ]
@@ -238,45 +238,48 @@
             "label": "雙音音程",
             "options": [
                 {
-                    "label": 0,
+                    "label": 1,
                     "value": 0
                 },
                 {
-                    "label": 1,
+                    "label": 2,
                     "value": 1
                 },
                 {
-                    "label": 2,
+                    "label": 3,
                     "value": 2
                 },
                 {
-                    "label": 3,
+                    "label": 4,
                     "value": 3
                 },
                 {
-                    "label": 4,
+                    "label": 5,
                     "value": 4
                 },
                 {
-                    "label": 5,
+                    "label": 6,
                     "value": 5
                 },
                 {
-                    "label": 6,
+                    "label": 7,
                     "value": 6
                 },
                 {
-                    "label": 7,
+                    "label": 8,
                     "value": 7
                 },
                 {
-                    "label": 8,
+                    "label": 9,
                     "value": 8
                 },
                 {
-                    "label": 9,
+                    "label": 10,
                     "value": 9
                 }
+            ],
+            "initialValue": [
+                0
             ]
         },
         {
@@ -302,15 +305,15 @@
                 },
                 {
                     "label": "C5",
-                    "value": "c"
+                    "value": "C'"
                 },
                 {
                     "label": "C6",
-                    "value": "c'"
+                    "value": "C''"
                 },
                 {
                     "label": "C7",
-                    "value": "c''"
+                    "value": "C'''"
                 }
             ],
             "initialValue": [
@@ -320,7 +323,7 @@
         },
         {
             "key": "tonality",
-            "type": "MultipleChoice",
+            "type": "SingleChoice",
             "label": "調性",
             "options": [
                 {
@@ -349,11 +352,11 @@
                 },
                 {
                     "label": "F♯",
-                    "value": "F^"
+                    "value": "F#"
                 },
                 {
                     "label": "C♯",
-                    "value": "C^"
+                    "value": "C#"
                 },
                 {
                     "label": "F",
@@ -361,32 +364,30 @@
                 },
                 {
                     "label": "B♭",
-                    "value": "B_"
+                    "value": "Bb"
                 },
                 {
                     "label": "E♭",
-                    "value": "E_"
+                    "value": "Eb"
                 },
                 {
                     "label": "A♭",
-                    "value": "A_"
+                    "value": "Ab"
                 },
                 {
                     "label": "D♭",
-                    "value": "D_"
+                    "value": "Db"
                 },
                 {
                     "label": "G♭",
-                    "value": "G_"
+                    "value": "Gb"
                 },
                 {
                     "label": "C♭",
-                    "value": "C_"
+                    "value": "Cb"
                 }
             ],
-            "initialValue": [
-                0
-            ]
+            "initialValue": 0
         }
     ]
 }

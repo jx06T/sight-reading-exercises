@@ -1,8 +1,8 @@
 {
     "SightReadin": {
         "reference": [
-            0,
-            7
+            "C",
+            "G"
         ],
         "interval": [
             1,
@@ -13,19 +13,19 @@
             2
         ],
         "rannge": [
-            3,
-            4
+            "C",
+            "c"
         ],
         "tonality": [
-            0
+            "C"
         ]
     },
     "SheetMusic": {
-        "timeSignature": 2,
+        "timeSignature": "4/4",
         "speed": 80,
         "rowsSM": 1,
         "lengthSM": 8,
-        "rightHand": 1,
-        "leftHand": 2
+        "rightHand": "S",
+        "leftHand": "C"
     }
 }

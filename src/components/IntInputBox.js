@@ -42,10 +42,10 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
     const handleMove = (e) => {
         if (isDragging.current) {
             const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-            diff.current = Math.round((clientX - startX.current) / 4);
-            if (Math.abs(diff.current) > 14) {
+            diff.current = Math.round((clientX - startX.current) / 6);
+            if (Math.abs(diff.current) > 12) {
                 direction.current = (clientX > startX.current) * 2 - 1
-                diff.current = 15 * direction.current
+                diff.current = 13 * direction.current
             } else {
                 direction.current = 0
             }
@@ -199,7 +199,7 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
     }
 
     return (
-        <div className="z-10 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4">
+        <div className="z-30 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4">
             {[1, 2, 3, "d", 4, 5, 6, " d", 7, 8, 9, "s", "n", 0, ' s', ' s'].map((num, index) => (
                 <button
                     key={num + "" + index}

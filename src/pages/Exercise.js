@@ -11,7 +11,7 @@ function Exercise(params) {
     const onChange = useCallback((v, key1, key2) => {
         settingParameters.current[key1] = settingParameters.current[key1] || {}
         settingParameters.current[key1][key2] = v
-        console.log(settingParameters.current)
+        // console.log(settingParameters.current)
     })
 
     useEffect(() => {
@@ -34,7 +34,7 @@ function Exercise(params) {
             <hr />
             <SheetMusicSetting callback={onChange} data={settingData.SheetMusic} />
             <hr />
-            <PlayArea getData={getSettingParameters} Chart={settingData} />
+            <PlayArea getData={getSettingParameters} />
         </div>
     );
 }
