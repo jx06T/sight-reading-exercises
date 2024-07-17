@@ -6,8 +6,8 @@ function MultipleChoice({ options, chart, initialValue = [1, 2], min = -Infinity
     const [showKeyboard, setShowKeyboard] = useState(false);
 
     useEffect(() => {
-        if (onChange) {
-            onChange(bValue.map(e=>chart[e]));
+        if (onChange && bValue.length > 0) {
+            onChange(bValue.map(e => chart[e]));
             // onChange(bValue);
         }
     }, [bValue]);
@@ -59,7 +59,9 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
 
     const handleButtonClick = (btnIndex, e) => {
         if (localValue.includes(btnIndex)) {
-            setLocalValue(prevInput => prevInput.filter(e => e != btnIndex));
+            if (localValue.length>1) {
+                setLocalValue(prevInput => prevInput.filter(e => e != btnIndex));
+            }
         } else {
             setLocalValue(prevInput => [...prevInput, btnIndex]);
         }

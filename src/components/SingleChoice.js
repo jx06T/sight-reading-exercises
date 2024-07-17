@@ -17,7 +17,6 @@ function SingleChoice({ options, chart, initialValue = 1, min = -Infinity, max =
     };
 
     const handleKeyboardInput = (newValue) => {
-        console.log(newValue)
         setValue(newValue)
     }
 

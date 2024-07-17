@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ABC_Renderer from "./ABC_Renderer";
 
-function PlayArea({ data, getData, ...params }) {
+function PlayArea({ data, ...params }) {
     const [rendererData, setRendererData] = useState({})
     const playBtnRef = useRef(null)
     const abcRendererRef = useRef();
@@ -63,7 +63,7 @@ function PlayArea({ data, getData, ...params }) {
     }
 
     const handleRender = (e) => {
-        render(getData())
+        render(data)
     }
 
     const render = (data) => {
@@ -130,7 +130,6 @@ function PlayArea({ data, getData, ...params }) {
     };
 
     useEffect(() => {
-        console.log(data)
         if (data.SightReadin) {
             render(data)
         }

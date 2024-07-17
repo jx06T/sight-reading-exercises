@@ -24,9 +24,7 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
     });
 
     const render = () => {
-        console.log("---------")
         if (paperRef.current) {
-            console.log(bpm)
             paperRef.current.style.transition = ""
             paperRef.current.style.left = "0px";
 
@@ -75,9 +73,10 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
     class CursorControl {
         constructor() {
             this.onEvent = (ev) => {
-                paperRef.current.style.transition = `left ${60 / bpmRef.current}s linear`
-                // paperRef.current.style.transition = `left ${60 / bpm * 0.5}s linear`
-                paperRef.current.style.left = `-${ev.left * 3 - 300}px`;
+                if (playingRef.current) {
+                    paperRef.current.style.transition = `left ${60 / bpmRef.current}s linear`
+                    paperRef.current.style.left = `-${ev.left * 3 - 300}px`;
+                }
 
                 if (ev.measureStart && ev.left === null) return;
 
