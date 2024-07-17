@@ -10,7 +10,7 @@ function SingleChoice({ options, chart, initialValue = 1, min = -Infinity, max =
             onChange(chart[bValue]);
             // onChange(bValue);
         }
-    }, [bValue, onChange]);
+    }, [bValue]);
 
     const handleDoubleClick = () => {
         setShowKeyboard(true);

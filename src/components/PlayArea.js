@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import ABC_Renderer from "./ABC_Renderer";
 
-function PlayArea({ getData, ...params }) {
+function PlayArea({ data, getData, ...params }) {
     const [rendererData, setRendererData] = useState({})
     const playBtnRef = useRef(null)
+    const abcRendererRef = useRef();
 
     const probabilityTable = [
         "00",
@@ -107,29 +108,33 @@ function PlayArea({ getData, ...params }) {
             bpm: data.SheetMusic.speed
         })
 
-        abcRendererRef.current.renderABC();
+        abcRendererRef.current.render();
         playBtnRef.current.textContent = "Play"
     }
-
-    const abcRendererRef = useRef();
-
-
 
     const handlePlay = (e) => {
         if (abcRendererRef.current.playingRef.current) {
             abcRendererRef.current.pause();
-            playBtnRef.current.textContent = "Play"
         } else {
             abcRendererRef.current.play();
-            playBtnRef.current.textContent = "Pause"
         }
     };
 
     const handleRollback = () => {
-        abcRendererRef.current.renderABC()
-        playBtnRef.current.textContent = "Play"
-
+        abcRendererRef.current.rollback()
     };
+
+    const handlePlayingChange = () => {
+        console.log("44", abcRendererRef.current.playingRef.current)
+        playBtnRef.current.textContent = abcRendererRef.current.playingRef.current ? "Pause" : "Play"
+    };
+
+    useEffect(() => {
+        console.log(data)
+        if (data.SightReadin) {
+            render(data)
+        }
+    }, [data])
 
     return (
         <>
@@ -139,7 +144,7 @@ function PlayArea({ getData, ...params }) {
                 <button ref={playBtnRef} onClick={handlePlay} className="jx-2">Play</button>
                 {/* <button onClick={handleMute} className="jx-2">Mute</button> */}
             </div>
-            <ABC_Renderer ref={abcRendererRef} {...rendererData} />
+            <ABC_Renderer ref={abcRendererRef} {...rendererData} PlayingChange={handlePlayingChange} />
         </>
     );
 }

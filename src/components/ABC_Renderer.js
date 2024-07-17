@@ -1,27 +1,37 @@
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import abcjs from "https://cdn.jsdelivr.net/npm/abcjs@6.4.1/+esm"
+import "../style/abcjs.css"
 
-const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m = "4/4", l = "1/4", k = "c", ...params }, ref) => {
+const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c", bpm = 80, m = "4/4", l = "1/4", k = "c", ...params }, ref) => {
     const abcNotation = `X:${id}\nM:${m}\nL:${l}\nK:${k}\nQ:1/4=${bpm}\n${music}`;
-    const containerRef = useRef(null);
+
+    const paperRef = useRef(null);
     const audioRef = useRef(null);
-    const containerLeftRef = useRef(0);
-    const animationRef = useRef(null);
+    const synthControlRef = useRef(null);
+
     const playingRef = useRef(false);
+    const controlButtons = useRef({});
+    const bpmRef = useRef(bpm);
 
-    const isMuteRef = useRef(false);
-    let lastTime = 0;
+    const clickHandlerRef = useRef(() => {
+        playingRef.current = !playingRef.current;
+        PlayingChange();
+    });
 
-    const [midiBuffer, setMidiBuffer] = useState(null)
+    const rollbackHandlerRef = useRef(() => {
+        paperRef.current.style.transition = ""
+        paperRef.current.style.left = "0px";
+    });
 
-    const renderABC = () => {
-        if (containerRef.current) {
-            // console.log(abcNotation)
-            containerLeftRef.current = 0;
-            containerRef.current.style.left = containerLeftRef.current + "px";
+    const render = () => {
+        console.log("---------")
+        if (paperRef.current) {
+            console.log(bpm)
+            paperRef.current.style.transition = ""
+            paperRef.current.style.left = "0px";
+
             const scale = 3;
-
-            const visualObj = abcjs.renderAbc(containerRef.current, abcNotation, {
+            const visualObj = abcjs.renderAbc(paperRef.current, abcNotation, {
                 scale: scale,
                 paddingleft: 0,
                 paddingright: 0,
@@ -33,72 +43,42 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
                 }
             });
 
-            const renderedSvg = containerRef.current.querySelector("svg");
+            const renderedSvg = paperRef.current.querySelector("svg");
             if (renderedSvg) {
-                // containerRef.current.style.width = lengthSM * 444 + 210 + "px";
-                containerRef.current.style.width = containerRef.current.offsetWidth + 5 + "px";
-                // containerRef.current.style.height = renderedSvg.height.baseVal.value + "px";
+                paperRef.current.style.width = paperRef.current.offsetWidth + 5 + "px";
             }
 
-            if (midiBuffer) {
-                pause()
-                console.log('s')
+            if (controlButtons.current.playBtn) {
+                setTune(visualObj[0]);
+            } else {
+                load(visualObj[0])
             }
-            load(visualObj[0])
         }
     }
 
     const play = () => {
-        if (animationRef.current) return;
-
-        if (midiBuffer && !isMuteRef.current && !playingRef.current) {
-            midiBuffer.click();
-        }
-
-        playingRef.current = true;
-        const pixelsPerBeat = 110;
-        const beatsPerSecond = bpm / 60;
-        const pixelsPerSecond = pixelsPerBeat * beatsPerSecond;
-        const pixelsPerMillisecond = pixelsPerSecond / 1000;
-
-        const animate = (t) => {
-            if (t - lastTime > 100) {
-                lastTime = t - 7
-            }
-            containerLeftRef.current -= pixelsPerMillisecond * (t - lastTime);
-            lastTime = t
-            if (parseInt(containerLeftRef.current) < -1 * parseInt(containerRef.current.style.width)) {
-                containerLeftRef.current = "0"
-                containerRef.current.style.left = `${containerLeftRef.current}px`;
-                pause(true)
-            }
-            if (containerRef.current) {
-                containerRef.current.style.left = `${containerLeftRef.current}px`;
-            }
-            if (playingRef.current) {
-                animationRef.current = requestAnimationFrame(animate);
-            }
-        };
-        animationRef.current = requestAnimationFrame(animate);
-    };
-
-    const pause = (t = false) => {
-        if (animationRef.current) {
-            console.log(playingRef.current)
-            cancelAnimationFrame(animationRef.current);
-            animationRef.current = null;
-
-            if (midiBuffer && !t && !isMuteRef.current && playingRef.current) {
-                midiBuffer.click();
-            }
-            playingRef.current = false;
+        if (!playingRef.current) {
+            controlButtons.current.playBtn.click();
         }
     };
+
+    const pause = () => {
+        if (playingRef.current) {
+            controlButtons.current.playBtn.click();
+        }
+    };
+
+    const rollback = () => {
+        controlButtons.current.RollbackBtn.click();
+    }
 
     class CursorControl {
         constructor() {
-            var self = this;
-            self.onEvent = function (ev) {
+            this.onEvent = (ev) => {
+                paperRef.current.style.transition = `left ${60 / bpmRef.current}s linear`
+                // paperRef.current.style.transition = `left ${60 / bpm * 0.5}s linear`
+                paperRef.current.style.left = `-${ev.left * 3 - 300}px`;
+
                 if (ev.measureStart && ev.left === null) return;
 
                 var lastSelection = document.querySelectorAll("svg .highlight");
@@ -116,54 +96,59 @@ const ABC_Renderer = forwardRef(({ lengthSM, id = "1", music = "c", bpm = 80, m 
         }
     }
 
-
     const cursorControl = new CursorControl();
     const load = (visualObj) => {
         if (abcjs.synth.supportsAudio()) {
-            synthControl = new abcjs.synth.SynthController();
-            synthControl.load("#audio", cursorControl, { displayPlay: true });
+            synthControlRef.current = new abcjs.synth.SynthController();
+            synthControlRef.current.load("#audio", cursorControl, { displayRestart: true, displayPlay: true, displayLoop: true });
             setTune(visualObj);
         } else {
             document.querySelector("#audio").innerHTML = "<div class='audio-error'>瀏覽器不支援音頻播放。</div>";
         }
     }
-
-    let synthControl;
     const setTune = (visualObj) => {
-        synthControl.disable(true);
-        let midiBuffer0 = new abcjs.synth.CreateSynth();
-        midiBuffer0.init({ visualObj: visualObj }).then(() => {
-            const midiBuffer1 = audioRef.current.querySelector(".abcjs-midi-start")
-            setMidiBuffer(midiBuffer1)
-            synthControl.setTune(visualObj, true).then((response) => {
-                console.log("Audio successfully loaded.")
+        synthControlRef.current.disable(true);
+
+        let midiBuffer = new abcjs.synth.CreateSynth();
+        midiBuffer.init({ visualObj: visualObj }).then(() => {
+            const playBtn = audioRef.current.querySelector(".abcjs-midi-start")
+            playBtn.removeEventListener("click", clickHandlerRef.current);
+            playBtn.addEventListener("click", clickHandlerRef.current);
+
+            const RollbackBtn = audioRef.current.querySelector(".abcjs-midi-reset")
+            RollbackBtn.removeEventListener("click", rollbackHandlerRef.current);
+            RollbackBtn.addEventListener("click", rollbackHandlerRef.current);
+            controlButtons.current = { playBtn, RollbackBtn }
+
+            synthControlRef.current.setTune(visualObj, true).then((response) => {
             });
-        }).catch(function (error) {
+
+        }).catch((error) => {
             console.warn("音頻加載問題:", error);
         });
     }
 
     useImperativeHandle(ref, () => ({
-        containerRef,
-        renderABC,
+        paperRef,
+        render,
         play,
         pause,
+        rollback,
         playingRef,
     }));
 
     useEffect(() => {
-        renderABC();
-    }, [abcNotation, lengthSM]);
+        bpmRef.current = bpm;
+        render();
+    }, [abcNotation, lengthSM, bpm]);
 
     return (
         <>
             <div ref={audioRef} id="audio" className="jx-4 mt-4 mb-8"></div>
             <div className="relative w-full !h-[700px] -mt-7 abc-renderer overflow-hidden">
-                <div ref={containerRef} className="absolute !h-[700px]">
+                <div ref={paperRef} className="abc-child absolute !h-[700px]">
                     <div id="abcjs-container"></div>
                 </div>
-                {/* <div className="absolute border-l-2 border-blue-700 border-dashed border-opacity-50 w-[4px] h-[160px]  left-[167px] top-[130px]"> */}
-                {/* </div> */}
             </div>
         </>
     );

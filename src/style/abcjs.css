@@ -1,0 +1,23 @@
+.abcjs-css-warning{
+    display: none;
+}
+.abcjs-inline-audio{
+    background-color: #464646 !important;
+    border-radius:5px;
+    height: 40px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.abcjs-midi-progress-background{
+    background-color: #797979 !important;
+    border:none !important;
+}
+
+.abcjs-midi-progress-indicator{
+    height: 20px !important;
+}
+
+.abcjs-btn{
+    margin-top: 2.5px;
+}

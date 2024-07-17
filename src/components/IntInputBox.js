@@ -17,7 +17,7 @@ function IntInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onChan
         if (onChange) {
             onChange(value);
         }
-    }, [value, onChange]);
+    }, [value]);
 
     const handleStart = (e) => {
         if (showKeyboard) {

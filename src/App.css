@@ -65,7 +65,7 @@ hr{
 }
 
 .jx-4{
-  @apply hidden
+  /* @apply hidden */
 }
 
 .highlight {

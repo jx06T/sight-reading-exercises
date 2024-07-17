@@ -8,7 +8,6 @@ function SightReadingSetting({ data, callback, ...params }) {
     const onChange = (v, key) => {
         callback(v, "SightReadin", key)
     }
-
     return (
         <SettingArea title="Sight Reading">
             <div className="setting-area flex flex-row flex-wrap justify-center">

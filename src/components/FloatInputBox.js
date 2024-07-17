@@ -17,7 +17,7 @@ function FloatInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onCh
         if (onChange) {
             onChange(value);
         }
-    }, [value, onChange]);
+    }, [value]);
 
     const handleStart = (e) => {
         if (showKeyboard) {
