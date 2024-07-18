@@ -59,7 +59,7 @@ hr{
 
 .jx-2{
   /* @apply z-10 w-24 border-2 hover:border-slate-100 rounded-md bg-slate-200 text-lg p-1 px-2 */
-  @apply z-10 bg-blue-200 rounded-full text-6xl p-2 bg-opacity-70 w-[76px] h-[76px] mb-16
+  @apply z-10 bg-blue-200 rounded-full text-6xl p-2 bg-opacity-70 w-[76px] h-[76px] mt-40
 }
 
 .jx-3{
