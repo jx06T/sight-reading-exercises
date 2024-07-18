@@ -165,7 +165,7 @@ function PlayArea({ data, ...params }) {
     return (
         <>
             <ABC_Renderer ref={abcRendererRef} {...rendererData} PlayingChange={handlePlayingChange} >
-                <div onClick={handlePlay} className={`${isPlaying ? "opacity-0" : "opacity-100"} z-20 flex justify-center space-x-12 bg-slate-300 w-full h-[100vh] pt-[30vh]`}>
+                <div onClick={handlePlay} className={`${isPlaying ? "opacity-0" : "opacity-100"} z-20 flex justify-center space-x-12 bg-slate-100 w-full h-[100vh] pt-[30vh] rounded-md`}>
                     {!isPlaying &&
                         <>
                             <button onClick={handleRender} className="jx-2">{<IonDiceOutline />}</button>

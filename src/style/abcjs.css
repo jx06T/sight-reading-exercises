@@ -26,13 +26,13 @@
 }
 
 .abcjs-btn g {
-	fill: #f4f4f4;
-	stroke: #f4f4f4;
+	fill: #b0d5ff;
+	stroke: #b0d5ff;
 }
 
 .abcjs-inline-audio .abcjs-btn:hover g {
-	fill: #cccccc;
-	stroke: #cccccc;
+	fill: #94c6ff;
+	stroke: #94c6ff;
 }
 
 .abcjs-inline-audio .abcjs-midi-selection.abcjs-pushed {
@@ -89,13 +89,17 @@
 	width: 20px;
 	margin-left: -10px; /* half of the width */
 	height: 14px;
-	background-color: #f4f4f4;
+	background-color: #b0d5ff;
 	position: absolute;
 	display: inline-block;
 	border-radius: 6px;
-	top: -4px;
+	top: -5px;
 	left: 0;
 	box-sizing: border-box;
+}
+
+.abcjs-inline-audio .abcjs-midi-progress-indicator:hover {
+	background-color: #94c6ff;
 }
 
 .abcjs-inline-audio .abcjs-midi-clock {
@@ -104,9 +108,9 @@
 	margin-right: 2px;
 	display: inline-block;
 	font-family: sans-serif;
-	font-size: 16px;
+	font-size: 18px;
 	box-sizing: border-box;
-	color: #f4f4f4;
+	color: #bad9fc;
 }
 
 .abcjs-inline-audio .abcjs-tempo-wrapper {
@@ -185,12 +189,13 @@
 }
 
 /* -------------------------------------------------------- */
-
 .abcjs-css-warning{
     display: none;
 }
 .abcjs-inline-audio{
-    background-color: #464646 !important;
+    /* background-color: #464646 !important; */
+	/* @apply bg-blue-900; */
+	background-color: #043772 !important;
     border-radius:5px;
     height: 40px;
     padding-left:10px;
@@ -198,7 +203,10 @@
 }
 
 .abcjs-midi-progress-background{
-    background-color: #797979 !important;
+	@apply !mt-[1px];
+	/* background-color: #797979 !important; */
+	/* background-color: rgb(20 70 210 / var(--tw-bg-opacity)) !important; */
+	background-color: #6988ac !important;
     border:none !important;
 }
 
@@ -207,7 +215,7 @@
 }
 
 .abcjs-btn{
-    margin-top: 2.ˋpx;
+    margin-top: 1.5px;
 }
 
 .abcjs-midi-loop.abcjs-pushed{
@@ -215,8 +223,13 @@
     height: 30px !important;
     /* margin-bottom: 2px !important; */
     border:none !important;
-    background-color: #727272 !important;
+	@apply !bg-blue-700;
+    /* background-color: #727272 !important; */
 }
 .abcjs-midi-loop.abcjs-pushed svg{
-    margin-top: -1px !important;
+    margin-top: -1.5px !important;
+}
+
+.abcjs-inline-audio button{
+	@apply !text-blue-300
 }

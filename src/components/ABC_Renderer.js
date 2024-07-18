@@ -163,7 +163,7 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
 
     return (
         <>
-            <div ref={audioRef} id="audio" className="jx-4 mb-8"></div>
+            <div ref={audioRef} id="audio" className="jx-4 mb-[2.8rem]"></div>
             <div className="relative w-full !h-[100vh] -mt-7 abc-renderer overflow-hidden">
                 <div ref={paperRef} className="abc-child absolute !h-[100vh]">
                     <div id="abcjs-container"></div>
