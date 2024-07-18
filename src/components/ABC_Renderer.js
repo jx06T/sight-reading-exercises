@@ -110,6 +110,7 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
                 playingRef.current = false
                 paperRef.current.style.transition = ""
                 paperRef.current.style.left = "0px"
+                PlayingChange();
             }
         }
     }
