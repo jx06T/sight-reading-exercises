@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ABC_Renderer from "./ABC_Renderer";
 import { IonDiceOutline, PhPauseFill, Right12Filled, RestartAltRounded } from "./Icons"
 
-function PlayArea({ data, ...props  }) {
+function PlayArea({ data, ...props }) {
     const [rendererData, setRendererData] = useState({})
     const [isPlaying, setIsPlaying] = useState(false)
     const abcRendererRef = useRef();
@@ -68,7 +68,7 @@ function PlayArea({ data, ...props  }) {
         render(data)
     }
 
-    const generate = (first, data) => {
+    const generate = (first, data, offsetL) => {
         const M = data.SheetMusic.timeSignature.split("/").map(e => parseInt(e))
 
         let musicR = "|"
@@ -97,10 +97,10 @@ function PlayArea({ data, ...props  }) {
                     lastNote = shiftNote(lastNote, offset)
                     musicR += lastNote
                 }
-                musicL += shiftNote(lastNote, -7)
+                musicL += shiftNote(lastNote, -offsetL)
 
                 musicR += offsetDT == 0 ? "" : shiftNote(lastNote, offsetDT) + "]"
-                musicL += offsetDT == 0 ? "" : shiftNote(lastNote, offsetDT - 7) + "]"
+                musicL += offsetDT == 0 ? "" : shiftNote(lastNote, offsetDT - offsetL) + "]"
             }
             musicR += "|"
             musicL += "|"
@@ -114,15 +114,15 @@ function PlayArea({ data, ...props  }) {
         let musicR = "|"
         let musicL = "|"
         if (data.SheetMusic.rightHand == "ST" && isSame) {
-            const music = generate(getRandomItem(data.SightReadin.reference), data)
+            const music = generate(getRandomItem(data.SightReadin.reference), data, 14)
             musicR = music.musicR
             musicL = music.musicL
         } else {
             if (data.SheetMusic.leftHand == "ST") {
-                musicL = generate(getRandomItem(data.SightReadin.reference), data).musicL
+                musicL = generate(getRandomItem(data.SightReadin.reference), data, 11).musicL
             }
             if (data.SheetMusic.rightHand == "ST") {
-                musicR = generate(getRandomItem(data.SightReadin.reference), data).musicR
+                musicR = generate(getRandomItem(data.SightReadin.reference), data, 7).musicR
             }
         }
 
@@ -136,7 +136,7 @@ function PlayArea({ data, ...props  }) {
             k: data.SightReadin.tonality,
             lengthSM: data.SheetMusic.lengthSM,
             bpm: data.SheetMusic.speed,
-            scale:data.SheetMusic.scale/10
+            scale: data.SheetMusic.scale / 10
         })
         abcRendererRef.current.render();
         setIsPlaying(false)

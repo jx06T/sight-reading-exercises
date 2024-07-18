@@ -89,8 +89,8 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
                 ))}
             </div>
             <button
-                id={`button-done`}
-                className={`mt-1 ml-[2.5px] rounded-md border w-[136px] h-8`}
+                id={"button-done"}
+                className={"my-1 ml-[2.5px] rounded-md border w-[136px] h-8"}
                 onClick={handleSubmit}
             >
                 <ArrowUpwardRounded className="w-[136px] h-5" />
