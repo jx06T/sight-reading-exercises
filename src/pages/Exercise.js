@@ -27,7 +27,7 @@ function Exercise(params) {
     if (!settingData) return <div>Loading...</div>;
 
     return (
-        <div className="m-4 sm:m-8 exercise">
+        <div className="m-3 mt-4 sm:mt-8 exercise">
             <SightReadingSetting callback={onChange} data={settingData.SightReadin} />
             {/* <hr />
             <ChordSetting /> */}

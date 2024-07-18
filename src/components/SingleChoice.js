@@ -75,7 +75,7 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
     }
 
     return (
-        <div className="z-30 bg-white bg-opacity-95 absolute custom-keyboard mt-[30px]">
+        <div className="z-30 bg-white bg-opacity-95 absolute custom-keyboard mt-[30px] rounded-sm">
             <div className="grid grid-cols-4">
                 {options.map((num, index) => (
                     <button
@@ -90,7 +90,7 @@ function CustomKeyboard({ options, onChange, done, initialValue }) {
             </div>
             <button
                 id={`button-done`}
-                className={`mt-1 rounded-md border w-[136px] h-8`}
+                className={`mt-1 ml-[2.5px] rounded-md border w-[136px] h-8`}
                 onClick={handleSubmit}
             >
                 <ArrowUpwardRounded className="w-[136px] h-5" />

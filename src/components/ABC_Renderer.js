@@ -29,14 +29,17 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
 
     const barBtnHandlerRe = useRef(() => {
         paperRef.current.style.transition = `left 0.5s linear`
+        isFirstRef.current = false
     });
 
 
     const render = () => {
         if (paperRef.current) {
             isFirstRef.current = true
+            playingRef.current = false
             paperRef.current.style.transition = ""
             paperRef.current.style.left = "0px";
+            PlayingChange();
 
             const scale = 3;
             const visualObj = abcjs.renderAbc(paperRef.current, abcNotation, {

@@ -148,19 +148,27 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
     }, [localValue, onChange]);
 
     const handleSubmit = () => {
-        done()
+        setLocalValue(prevInput => {
+            const newNewValue = Math.max(min, Math.min(max, prevInput ? prevInput : 0));
+            return newNewValue
+        });
+        setTimeout(() => {
+            done()
+        }, 10);
     };
 
     const handleDelete = () => {
         setLocalValue(prevInput => {
             const newValue = parseFloat((prevInput + "").slice(0, -1))
-            const newNewValue = Math.max(min, Math.min(max, newValue ? newValue : 0));
+            // const newNewValue = Math.max(min, Math.min(max, newValue ? newValue : 0));
+            const newNewValue = newValue;
             return newNewValue
         });
     };
 
     const handleNegate = () => {
-        setLocalValue(prevInput => Math.max(min, Math.min(max, parseFloat(prevInput) * -1)));
+        // setLocalValue(prevInput => Math.max(min, Math.min(max, parseFloat(prevInput) * -1)));
+        setLocalValue(prevInput => -1 * parseFloat(prevInput));
     };
 
     const handleType = (v) => {
@@ -170,7 +178,8 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
                 prevInput = ""
             }
             const newValue = prevInput + "" + v
-            const newNewValue = Math.max(min, Math.min(max, newValue));
+            const newNewValue = newValue;
+            // const newNewValue = Math.max(min, Math.min(max, newValue));
             return parseFloat(newNewValue)
         });
     };
@@ -199,7 +208,7 @@ function CustomKeyboard({ onChange, done, initialValue, min, max }) {
     }
 
     return (
-        <div className="z-30 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4">
+        <div className="z-30 bg-white bg-opacity-95 absolute mt-[30px] custom-keyboard grid grid-cols-4 grid-rows-4 rounded-sm">
             {[1, 2, 3, "d", 4, 5, 6, " d", 7, 8, 9, "s", "n", 0, ' s', ' s'].map((num, index) => (
                 <button
                     key={num + "" + index}

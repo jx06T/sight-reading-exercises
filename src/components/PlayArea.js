@@ -112,20 +112,24 @@ function PlayArea({ data, ...params }) {
     const render = (data) => {
         const M = data.SheetMusic.timeSignature.split("/").map(e => parseInt(e))
         const isSame = data.SheetMusic.leftHand == "Sa"
-
+        let musicR = "|"
+        let musicL = "|"
         if (data.SheetMusic.rightHand == "ST" && isSame) {
-            var { musicR, musicL } = generate(getRandomItem(data.SightReadin.reference), data)
+            const music = generate(getRandomItem(data.SightReadin.reference), data)
+            musicR = music.musicR
+            musicL = music.musicL
         } else {
             if (data.SheetMusic.leftHand == "ST") {
-                var musicL = generate(getRandomItem(data.SightReadin.reference), data).musicL
+                musicL = generate(getRandomItem(data.SightReadin.reference), data).musicL
             }
-            if (data.SheetMusic.leftHand == "ST") {
-                var musicR = generate(getRandomItem(data.SightReadin.reference), data).musicR
+            if (data.SheetMusic.rightHand == "ST") {
+                musicR = generate(getRandomItem(data.SightReadin.reference), data).musicR
             }
         }
 
 
         const AllMusic = `%%staves {(RH) (LH)}\nV:RH clef=treble\nV:LH clef=bass\nV: RH\n${musicR}\nV: LH\n${musicL}`
+        console.log(AllMusic)
         setRendererData({
             music: AllMusic,
             m: data.SheetMusic.timeSignature,
