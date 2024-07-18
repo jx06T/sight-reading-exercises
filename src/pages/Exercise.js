@@ -4,7 +4,7 @@ import SightReadingSetting from "../components/SightReadingSetting"
 import ChordSetting from "../components/ChordSetting"
 import SheetMusicSetting from "../components/SheetMusicSetting"
 
-function Exercise(params) {
+function Exercise(props ) {
     const [settingParameters, setSettingParameters] = useState({})
     const [settingData, setSettingData] = useState(null);
 

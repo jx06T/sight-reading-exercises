@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function SettingArea({ title, children, ...params }) {
+function SettingArea({ title, children, ...props  }) {
     const [showChildren, setShowChildren] = useState(true)
 
     return (

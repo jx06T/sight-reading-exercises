@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ABC_Renderer from "./ABC_Renderer";
 import { IonDiceOutline, PhPauseFill, Right12Filled, RestartAltRounded } from "./Icons"
 
-function PlayArea({ data, ...params }) {
+function PlayArea({ data, ...props  }) {
     const [rendererData, setRendererData] = useState({})
     const [isPlaying, setIsPlaying] = useState(false)
     const abcRendererRef = useRef();
@@ -80,7 +80,6 @@ function PlayArea({ data, ...params }) {
                     return r + (data.SightReadin.intervalDT.includes(lI) ? e : "")
                 }, "")
                 const offsetDT = (Math.random() > 0.5 ? 1 : -1) * parseInt(getRandomItem(allChoices))
-                // console.log(offsetDT)
                 musicR += offsetDT == 0 ? "" : "["
                 musicL += offsetDT == 0 ? "" : "["
 
@@ -136,7 +135,8 @@ function PlayArea({ data, ...params }) {
             l: "1/" + M[1],
             k: data.SightReadin.tonality,
             lengthSM: data.SheetMusic.lengthSM,
-            bpm: data.SheetMusic.speed
+            bpm: data.SheetMusic.speed,
+            scale:data.SheetMusic.scale/10
         })
         abcRendererRef.current.render();
         setIsPlaying(false)
@@ -169,7 +169,7 @@ function PlayArea({ data, ...params }) {
     return (
         <>
             <ABC_Renderer ref={abcRendererRef} {...rendererData} PlayingChange={handlePlayingChange} >
-                <div onClick={handlePlay} className={`${isPlaying ? "opacity-0" : "opacity-100"} z-20 flex justify-center space-x-12 bg-slate-100 w-full h-[100vh] pt-[30vh] rounded-md`}>
+                <div onClick={handlePlay} className={`${isPlaying ? "opacity-0" : "opacity-100"} z-20 flex justify-center items-center space-x-12 bg-slate-100 h-[100%] w-full rounded-md`}>
                     {!isPlaying &&
                         <>
                             <button onClick={handleRender} className="jx-2">{<IonDiceOutline />}</button>

@@ -86,6 +86,14 @@
             "max": 32
         },
         {
+            "key": "scale",
+            "type": "IntInputBox",
+            "label": "大小",
+            "initialValue": 25,
+            "min": 1,
+            "max": 50
+        },
+        {
             "key": "rightHand",
             "label": "右手",
             "type": "SingleChoice",

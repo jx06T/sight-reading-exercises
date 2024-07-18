@@ -43,7 +43,8 @@ function FloatInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onCh
         }
         isDragging.current = true;
         startX.current = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-        startValue.current = parseFloat(value);
+        startValue.current = parseFloat(value.toFixed(2));
+
         bias.current = 0
         document.addEventListener('mousemove', handleMove);
         document.addEventListener('touchmove', handleMove);
@@ -70,8 +71,9 @@ function FloatInputBox({ initialValue = 0, min = -Infinity, max = Infinity, onCh
                 direction.current = 0
                 console.log(diff.current)
             }
-            const newValue = Math.max(min, Math.min(max, startValue.current + diff.current + bias.current));
-            console.log(diff.current)
+            const newValue = Math.max(min, Math.min(max, startValue.current + diff.current + bias.current)).toFixed(2);
+            console.log(diff.current, bias.current, startValue.current,newValue)
+
             setValue(parseFloat(newValue));
         }
     };

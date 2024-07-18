@@ -1,6 +1,6 @@
 import React from "react";
 
-function NotFound(params) {
+function NotFound(props ) {
     return (
         <div className="not-found flex flex-col items-center">
             <h1 className="text-center text-[18rem] m-4 border-b">404</h1>

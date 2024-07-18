@@ -4,7 +4,7 @@ import FloatInputBox from "./FloatInputBox";
 import MultipleChoice from "./MultipleChoice";
 import SettingArea from "./SettingArea";
 
-function ChordSetting({ callback, ...params }) {
+function ChordSetting({ callback, ...props  }) {
     const onChange = (v) => {
         // console.log(v)
     }

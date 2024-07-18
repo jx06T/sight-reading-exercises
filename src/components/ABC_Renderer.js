@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import abcjs from "https://cdn.jsdelivr.net/npm/abcjs@6.4.1/+esm"
 import "../style/abcjs.css"
 
-const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c", bpm = 80, m = "4/4", l = "1/4", k = "c", ...params }, ref) => {
+const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, scale, id = "1", music = "c", bpm = 80, m = "4/4", l = "1/4", k = "c", ...props }, ref) => {
     const abcNotation = `X:${id}\nM:${m}\nL:${l}\nK:${k}\n%%printTempo false\nQ:1/4=${bpm}\n${music}`;
     // const abcNotation = `X:${id}\nM:${m}\nL:${l}\nK:${k}\n${music}`;
 
@@ -13,6 +13,7 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
     const playingRef = useRef(false);
     const controlButtons = useRef({});
     const bpmRef = useRef(bpm);
+    const scaleRef = useRef(scale);
     const isFirstRef = useRef(true);
 
     const clickHandlerRef = useRef(() => {
@@ -41,9 +42,10 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
             paperRef.current.style.left = "0px";
             PlayingChange();
 
-            const scale = 3;
+            // const scale = 2;
+            scaleRef.current = scale
             const visualObj = abcjs.renderAbc(paperRef.current, abcNotation, {
-                scale: scale,
+                scale: scaleRef.current,
                 paddingleft: 0,
                 paddingright: 0,
                 initialClef: true,
@@ -57,6 +59,8 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
             const renderedSvg = paperRef.current.querySelector("svg");
             if (renderedSvg) {
                 paperRef.current.style.width = paperRef.current.offsetWidth + 50 + "px";
+                paperRef.current.style.height = paperRef.current.offsetHeight + 50 + "px";
+                paperRef.current.parentNode.style.height = paperRef.current.offsetHeight + 50 + "px";
             }
 
             if (controlButtons.current.playBtn) {
@@ -89,7 +93,7 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
             this.onEvent = (ev) => {
                 if (!isFirstRef.current) {
                     paperRef.current.style.transition = `left ${60 / bpmRef.current}s linear`
-                    paperRef.current.style.left = `calc(10vw - ${ev.left * 3}px)`;
+                    paperRef.current.style.left = `calc(10vw - ${ev.left * scaleRef.current}px)`;
                 }
 
                 if (ev.measureStart && ev.left === null) return;
@@ -168,11 +172,11 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
     return (
         <>
             <div ref={audioRef} id="audio" className="jx-4 mb-[2.8rem]"></div>
-            <div className="relative w-full !h-[100vh] -mt-7 abc-renderer overflow-hidden">
-                <div ref={paperRef} className="abc-child absolute !h-[100vh]">
+            <div className="relative w-full -mt-7 abc-renderer overflow-hidden">
+                <div ref={paperRef} className="abc-child absolute ">
                     <div id="abcjs-container"></div>
                 </div>
-                {params.children}
+                {props.children}
             </div>
         </>
     );
