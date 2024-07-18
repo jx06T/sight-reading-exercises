@@ -69,6 +69,7 @@
             "max": 200
         },
         {
+            "hide": true,
             "key": "rowsSM",
             "type": "IntInputBox",
             "label": "行數",
@@ -90,16 +91,16 @@
             "type": "SingleChoice",
             "options": [
                 {
-                    "label": "N",
-                    "value": "N"
+                    "label": "No",
+                    "value": "No"
                 },
                 {
-                    "label": "S",
-                    "value": "S"
+                    "label": "ST",
+                    "value": "ST"
                 },
                 {
-                    "label": "C",
-                    "value": "C"
+                    "label": "Ch",
+                    "value": "Ch"
                 }
             ],
             "initialValue": 1
@@ -110,16 +111,20 @@
             "label": "左手",
             "options": [
                 {
-                    "label": "N",
-                    "value": "N"
+                    "label": "No",
+                    "value": "No"
                 },
                 {
-                    "label": "S",
-                    "value": "S"
+                    "label": "ST",
+                    "value": "ST"
                 },
                 {
-                    "label": "C",
-                    "value": "C"
+                    "label": "Sa",
+                    "value": "Sa"
+                },
+                {
+                    "label": "Ch",
+                    "value": "Ch"
                 }
             ],
             "initialValue": 2
@@ -283,6 +288,7 @@
             ]
         },
         {
+            "hide": true,
             "key": "rannge",
             "type": "MultipleChoice",
             "label": "音域",

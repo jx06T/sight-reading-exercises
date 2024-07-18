@@ -14,6 +14,7 @@ function SheetMusicSetting({ callback, data, ...params }) {
             <div className="setting-area flex flex-row flex-wrap justify-center">
                 {
                     data.map((e, i) => (
+                        !e.hide &&
                         <div key={e.key} className="jx-3">
                             <span className="">{e.label}</span>
                             {e.type === "MultipleChoice" ? <MultipleChoice options={e.options.map(e => e.label)} chart={e.options.map(e => e.value)} onChange={(newValue) => onChange(newValue, e.key)} className="" initialValue={e.initialValue} /> :

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import ABC_Renderer from "./ABC_Renderer";
+import { IonDiceOutline, PhPauseFill, Right12Filled, RestartAltRounded } from "./Icons"
 
 function PlayArea({ data, ...params }) {
     const [rendererData, setRendererData] = useState({})
-    const playBtnRef = useRef(null)
+    const [isPlaying, setIsPlaying] = useState(false)
     const abcRendererRef = useRef();
 
     const probabilityTable = [
@@ -63,14 +64,16 @@ function PlayArea({ data, ...params }) {
     }
 
     const handleRender = (e) => {
+        e.stopPropagation();
         render(data)
     }
 
-    const render = (data) => {
+    const generate = (first, data) => {
         const M = data.SheetMusic.timeSignature.split("/").map(e => parseInt(e))
-        console.log(data, M)
-        let music = "|"
-        let lastNote = getRandomItem(data.SightReadin.reference)
+
+        let musicR = "|"
+        let musicL = "|"
+        let lastNote = first
         for (let i = 0; i < data.SheetMusic.lengthSM; i++) {
             for (let j = 0; j < M[0]; j++) {
                 const allChoices = probabilityTableDT.reduce((r, e, lI) => {
@@ -78,13 +81,14 @@ function PlayArea({ data, ...params }) {
                 }, "")
                 const offsetDT = (Math.random() > 0.5 ? 1 : -1) * parseInt(getRandomItem(allChoices))
                 // console.log(offsetDT)
-                music += offsetDT == 0 ? "" : "["
+                musicR += offsetDT == 0 ? "" : "["
+                musicL += offsetDT == 0 ? "" : "["
 
                 if (Math.random() > 0.7 || (data.SightReadin.interval.length == 1 && data.SightReadin.interval[0] == 0)) {
                     const offset = Math.random() > 0.5 ? 0 : 7
                     // console.log(offset)
                     lastNote = shiftNote(getRandomItem(data.SightReadin.reference), offset)
-                    music += lastNote
+                    musicR += lastNote
                 } else {
                     const allChoices = probabilityTable.reduce((r, e, lI) => {
                         return r + (data.SightReadin.interval.includes(lI) ? e : "")
@@ -92,27 +96,50 @@ function PlayArea({ data, ...params }) {
                     const offset = (Math.random() > 0.5 ? 1 : -1) * parseInt(getRandomItem(allChoices))
                     // console.log(offset)
                     lastNote = shiftNote(lastNote, offset)
-                    music += lastNote
+                    musicR += lastNote
                 }
+                musicL += shiftNote(lastNote, -7)
 
-                music += offsetDT == 0 ? "" : shiftNote(lastNote, offsetDT) + "]"
+                musicR += offsetDT == 0 ? "" : shiftNote(lastNote, offsetDT) + "]"
+                musicL += offsetDT == 0 ? "" : shiftNote(lastNote, offsetDT - 7) + "]"
             }
-            music += "|"
+            musicR += "|"
+            musicL += "|"
         }
+        return { musicL, musicR }
+    }
+
+    const render = (data) => {
+        const M = data.SheetMusic.timeSignature.split("/").map(e => parseInt(e))
+        const isSame = data.SheetMusic.leftHand == "Sa"
+
+        if (data.SheetMusic.rightHand == "ST" && isSame) {
+            var { musicR, musicL } = generate(getRandomItem(data.SightReadin.reference), data)
+        } else {
+            if (data.SheetMusic.leftHand == "ST") {
+                var musicL = generate(getRandomItem(data.SightReadin.reference), data).musicL
+            }
+            if (data.SheetMusic.leftHand == "ST") {
+                var musicR = generate(getRandomItem(data.SightReadin.reference), data).musicR
+            }
+        }
+
+
+        const AllMusic = `%%staves {(RH) (LH)}\nV:RH clef=treble\nV:LH clef=bass\nV: RH\n${musicR}\nV: LH\n${musicL}`
         setRendererData({
-            music: music,
+            music: AllMusic,
             m: data.SheetMusic.timeSignature,
             l: "1/" + M[1],
             k: data.SightReadin.tonality,
             lengthSM: data.SheetMusic.lengthSM,
             bpm: data.SheetMusic.speed
         })
-
         abcRendererRef.current.render();
-        playBtnRef.current.textContent = "Play"
+        setIsPlaying(false)
     }
 
     const handlePlay = (e) => {
+        e.stopPropagation();
         if (abcRendererRef.current.playingRef.current) {
             abcRendererRef.current.pause();
         } else {
@@ -120,13 +147,13 @@ function PlayArea({ data, ...params }) {
         }
     };
 
-    const handleRollback = () => {
+    const handleRollback = (e) => {
+        e.stopPropagation();
         abcRendererRef.current.rollback()
     };
 
     const handlePlayingChange = () => {
-        console.log("44", abcRendererRef.current.playingRef.current)
-        playBtnRef.current.textContent = abcRendererRef.current.playingRef.current ? "Pause" : "Play"
+        setIsPlaying(abcRendererRef.current.playingRef.current)
     };
 
     useEffect(() => {
@@ -137,13 +164,17 @@ function PlayArea({ data, ...params }) {
 
     return (
         <>
-            <div className="flex justify-center space-x-6">
-                <button onClick={handleRender} className="jx-2">Render</button>
-                <button onClick={handleRollback} className="jx-2">Rollback</button>
-                <button ref={playBtnRef} onClick={handlePlay} className="jx-2">Play</button>
-                {/* <button onClick={handleMute} className="jx-2">Mute</button> */}
-            </div>
-            <ABC_Renderer ref={abcRendererRef} {...rendererData} PlayingChange={handlePlayingChange} />
+            <ABC_Renderer ref={abcRendererRef} {...rendererData} PlayingChange={handlePlayingChange} >
+                <div onClick={handlePlay} className={`${isPlaying ? "opacity-0" : "opacity-100"} z-20 flex justify-center space-x-12 bg-slate-300 w-full h-[100vh] pt-[30vh]`}>
+                    {!isPlaying &&
+                        <>
+                            <button onClick={handleRender} className="jx-2">{<IonDiceOutline />}</button>
+                            <button onClick={handlePlay} className="jx-2">{isPlaying ? <PhPauseFill /> : <Right12Filled />}</button>
+                            <button onClick={handleRollback} className="jx-2">{<RestartAltRounded />}</button>
+                        </>
+                    }
+                </div>
+            </ABC_Renderer>
         </>
     );
 }

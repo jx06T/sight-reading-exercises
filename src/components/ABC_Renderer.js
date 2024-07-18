@@ -3,7 +3,8 @@ import abcjs from "https://cdn.jsdelivr.net/npm/abcjs@6.4.1/+esm"
 import "../style/abcjs.css"
 
 const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c", bpm = 80, m = "4/4", l = "1/4", k = "c", ...params }, ref) => {
-    const abcNotation = `X:${id}\nM:${m}\nL:${l}\nK:${k}\nQ:1/4=${bpm}\n${music}`;
+    const abcNotation = `X:${id}\nM:${m}\nL:${l}\nK:${k}\n%%printTempo false\nQ:1/4=${bpm}\n${music}`;
+    // const abcNotation = `X:${id}\nM:${m}\nL:${l}\nK:${k}\n${music}`;
 
     const paperRef = useRef(null);
     const audioRef = useRef(null);
@@ -12,9 +13,12 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
     const playingRef = useRef(false);
     const controlButtons = useRef({});
     const bpmRef = useRef(bpm);
+    const isFirstRef = useRef(true);
 
     const clickHandlerRef = useRef(() => {
         playingRef.current = !playingRef.current;
+        isFirstRef.current = false
+
         PlayingChange();
     });
 
@@ -23,8 +27,14 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
         paperRef.current.style.left = "0px";
     });
 
+    const barBtnHandlerRe = useRef(() => {
+        paperRef.current.style.transition = `left 0.5s linear`
+    });
+
+
     const render = () => {
         if (paperRef.current) {
+            isFirstRef.current = true
             paperRef.current.style.transition = ""
             paperRef.current.style.left = "0px";
 
@@ -38,12 +48,12 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
                     minPadding: 15,
                     minWidth: lengthSM * 150 + (lengthSM > 32 ? 0 : (1.5 * (32 - lengthSM) ** 1.1)),
                     align: 'left',
-                }
+                },
             });
 
             const renderedSvg = paperRef.current.querySelector("svg");
             if (renderedSvg) {
-                paperRef.current.style.width = paperRef.current.offsetWidth + 5 + "px";
+                paperRef.current.style.width = paperRef.current.offsetWidth + 50 + "px";
             }
 
             if (controlButtons.current.playBtn) {
@@ -51,6 +61,7 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
             } else {
                 load(visualObj[0])
             }
+
         }
     }
 
@@ -67,15 +78,15 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
     };
 
     const rollback = () => {
-        controlButtons.current.RollbackBtn.click();
+        controlButtons.current.rollbackBtn.click();
     }
 
     class CursorControl {
         constructor() {
             this.onEvent = (ev) => {
-                if (playingRef.current) {
+                if (!isFirstRef.current) {
                     paperRef.current.style.transition = `left ${60 / bpmRef.current}s linear`
-                    paperRef.current.style.left = `-${ev.left * 3 - 300}px`;
+                    paperRef.current.style.left = `calc(10vw - ${ev.left * 3}px)`;
                 }
 
                 if (ev.measureStart && ev.left === null) return;
@@ -92,6 +103,11 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
                     }
                 }
             };
+            this.onFinished = () => {
+                playingRef.current = false
+                paperRef.current.style.transition = ""
+                paperRef.current.style.left = "0px"
+            }
         }
     }
 
@@ -114,14 +130,18 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
             playBtn.removeEventListener("click", clickHandlerRef.current);
             playBtn.addEventListener("click", clickHandlerRef.current);
 
-            const RollbackBtn = audioRef.current.querySelector(".abcjs-midi-reset")
-            RollbackBtn.removeEventListener("click", rollbackHandlerRef.current);
-            RollbackBtn.addEventListener("click", rollbackHandlerRef.current);
-            controlButtons.current = { playBtn, RollbackBtn }
+            const barBtn = audioRef.current.querySelector(".abcjs-midi-progress-background")
+            barBtn.removeEventListener("click", barBtnHandlerRe.current);
+            barBtn.addEventListener("click", barBtnHandlerRe.current);
 
+            const rollbackBtn = audioRef.current.querySelector(".abcjs-midi-reset")
+            rollbackBtn.removeEventListener("click", rollbackHandlerRef.current);
+            rollbackBtn.addEventListener("click", rollbackHandlerRef.current);
+
+            controlButtons.current = { playBtn, rollbackBtn, barBtn }
+            // synthControlRef.current.setTune(visualObj, true, {drum: "d2dd2ddz 76 77 76 77 77 60 30 60 30 30", drumIntro: 1 } ).then((response) => {
             synthControlRef.current.setTune(visualObj, true).then((response) => {
             });
-
         }).catch((error) => {
             console.warn("音頻加載問題:", error);
         });
@@ -143,11 +163,12 @@ const ABC_Renderer = forwardRef(({ PlayingChange, lengthSM, id = "1", music = "c
 
     return (
         <>
-            <div ref={audioRef} id="audio" className="jx-4 mt-4 mb-8"></div>
-            <div className="relative w-full !h-[700px] -mt-7 abc-renderer overflow-hidden">
-                <div ref={paperRef} className="abc-child absolute !h-[700px]">
+            <div ref={audioRef} id="audio" className="jx-4 mb-8"></div>
+            <div className="relative w-full !h-[100vh] -mt-7 abc-renderer overflow-hidden">
+                <div ref={paperRef} className="abc-child absolute !h-[100vh]">
                     <div id="abcjs-container"></div>
                 </div>
+                {params.children}
             </div>
         </>
     );
