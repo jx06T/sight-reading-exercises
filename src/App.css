@@ -74,3 +74,8 @@ hr{
   fill: rgb(207, 0, 0);
   stroke: rgb(207, 0, 0);
 }
+
+
+.js-5+*{
+  display: none;
+}
