@@ -36,13 +36,7 @@ function PlayArea({ data, ...props }) {
     const shiftNote = (note, offset) => {
         const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
-        let octave = 0;
-        let pitch = note.charAt(0).toUpperCase();
-
-        for (let i = 1; i < note.length; i++) {
-            if (note[i] === ',') octave--;
-            else if (note[i] === "'") octave++;
-        }
+        let { pitch: pitch, octave: octave } = getNoteInfo(note);
 
         let index = notes.indexOf(pitch);
         index += offset;
@@ -57,6 +51,32 @@ function PlayArea({ data, ...props }) {
             newNote = newNote + "'".repeat(octave);
         }
         return newNote;
+    }
+
+    const getNoteInfo = (note) => {
+        let octave = 0;
+        let pitch = note.charAt(0).toUpperCase();
+        for (let i = 1; i < note.length; i++) {
+            if (note[i] === ',') octave--;
+            else if (note[i] === "'") octave++;
+        }
+        return { pitch, octave };
+    }
+
+    const calculateInterval = (note1, note2) => {
+        const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+        const { pitch: pitch1, octave: octave1 } = getNoteInfo(note1);
+        const { pitch: pitch2, octave: octave2 } = getNoteInfo(note2);
+
+        let index1 = notes.indexOf(pitch1);
+        let index2 = notes.indexOf(pitch2);
+
+        // let semitones = (index1 - index2 + 7) % 7;
+        let semitones = index2 - index1;
+        semitones += (octave2 - octave1) * 7;
+
+        return semitones;
     }
 
     const getRandomItem = (arr) => {
@@ -119,7 +139,7 @@ function PlayArea({ data, ...props }) {
             musicL = music.musicL
         } else {
             if (data.SheetMusic.leftHand == "ST") {
-                musicL = generate(getRandomItem(data.SightReadin.reference), data, 11).musicL
+                musicL = generate(getRandomItem(data.SightReadin.reference), data, 14).musicL
             }
             if (data.SheetMusic.rightHand == "ST") {
                 musicR = generate(getRandomItem(data.SightReadin.reference), data, 7).musicR
